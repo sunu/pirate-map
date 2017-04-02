@@ -912,5 +912,15 @@ document.getElementsByTagName('button')[0].addEventListener('click', function ()
   new PirateMap();
 });
 
+document.getElementsByTagName('button')[0].addEventListener('click', function () {
+  var canvas = document.getElementsByTagName('canvas')[0];
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  document.getElementsByTagName('h1')[0].innerHTML = "The hidden treasure of Captain " + utils.getRandomName();
+  new PirateMap();
+});
+
+document.getElementsByTagName('h1')[0].innerHTML = "The hidden treasure of Captain " + utils.getRandomName();
+
 /***/ })
 /******/ ]);
