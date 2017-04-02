@@ -63,11 +63,167 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.tearCanvasBorders = tearCanvasBorders;
+exports.getRandomInt = getRandomInt;
+exports.getRandomSample = getRandomSample;
+exports.getRandomName = getRandomName;
+function tearCanvasBorders(canvas) {
+  _tearBottom(canvas);
+  _tearTop(canvas);
+  _tearLeft(canvas);
+  _tearRight(canvas);
+}
+
+function _tearBottom(canvas) {
+  var ctx = canvas.getContext('2d');
+  var lastX = 0,
+      randX = void 0,
+      randY = void 0;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height);
+
+  randY = (Math.floor(Math.random() * 3) + 95) / 100 * canvas.height;
+  ctx.lineTo(0, randY);
+
+  while (lastX <= canvas.width) {
+    randX = Math.floor(Math.random() * 3) / 100 * canvas.width;
+    randY = (Math.floor(Math.random() * 3) + 95) / 100 * canvas.height;
+    lastX = lastX + randX;
+    ctx.lineTo(lastX, randY);
+  }
+  ctx.lineTo(canvas.width, canvas.height);
+  ctx.closePath();
+  ctx.clip();
+  ctx.beginPath();
+  ctx.fillStyle = 'white';
+  ctx.rect(0, 0, canvas.width, canvas.height);
+  ctx.fill();
+  ctx.restore();
+}
+
+function _tearTop(canvas) {
+  var ctx = canvas.getContext('2d');
+  var lastX = 0,
+      randX = void 0,
+      randY = void 0;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+
+  randY = (Math.floor(Math.random() * 3) + 1) / 100 * canvas.height;
+  ctx.lineTo(0, randY);
+
+  while (lastX <= canvas.width) {
+    randX = Math.floor(Math.random() * 3) / 100 * canvas.width;
+    randY = (Math.floor(Math.random() * 3) + 1) / 100 * canvas.height;
+    lastX = lastX + randX;
+    ctx.lineTo(lastX, randY);
+  }
+  ctx.lineTo(canvas.width, 0);
+  ctx.closePath();
+  ctx.clip();
+  ctx.beginPath();
+  ctx.fillStyle = 'white';
+  ctx.rect(0, 0, canvas.width, canvas.height);
+  ctx.fill();
+  ctx.restore();
+}
+
+function _tearLeft(canvas) {
+  var ctx = canvas.getContext('2d');
+  var lastY = 0,
+      randX = void 0,
+      randY = void 0;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+
+  randX = (Math.floor(Math.random() * 3) + 1) / 100 * canvas.width;
+  ctx.lineTo(randX, 0);
+
+  while (lastY <= canvas.height) {
+    randX = (Math.floor(Math.random() * 3) + 1) / 100 * canvas.width;
+    randY = Math.floor(Math.random() * 3) / 100 * canvas.height;
+    lastY = lastY + randY;
+    ctx.lineTo(randX, lastY);
+  }
+  ctx.lineTo(0, canvas.height);
+  ctx.closePath();
+  ctx.clip();
+  ctx.beginPath();
+  ctx.fillStyle = 'white';
+  ctx.rect(0, 0, canvas.width, canvas.height);
+  ctx.fill();
+  ctx.restore();
+}
+
+function _tearRight(canvas) {
+  var ctx = canvas.getContext('2d');
+  var lastY = 0,
+      randX = void 0,
+      randY = void 0;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(canvas.width, 0);
+
+  randX = (Math.floor(Math.random() * 3) + 1) / 100 * canvas.width;
+  ctx.lineTo(randX, 0);
+
+  while (lastY <= canvas.height) {
+    randX = (Math.floor(Math.random() * 3) + 95) / 100 * canvas.width;
+    randY = Math.floor(Math.random() * 3) / 100 * canvas.height;
+    lastY = lastY + randY;
+    ctx.lineTo(randX, lastY);
+  }
+  ctx.lineTo(canvas.width, canvas.height);
+  ctx.closePath();
+  ctx.clip();
+  ctx.beginPath();
+  ctx.fillStyle = 'white';
+  ctx.rect(0, 0, canvas.width, canvas.height);
+  ctx.fill();
+  ctx.restore();
+}
+
+/* Generate a random integer between min and max */
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+/* Get a random item from an array of items */
+function getRandomSample(items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+function getRandomName() {
+  var consonant = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'];
+  var vowel = ['a', 'e', 'i', 'o', 'u'];
+  var length = getRandomInt(2, 5);
+  var name = "",
+      start = 0;
+  while (start < length) {
+    name = name + getRandomSample(consonant) + getRandomSample(vowel);
+    start++;
+  }
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -490,7 +646,7 @@ if (true) {
 
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -498,11 +654,11 @@ if (true) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _simplexNoise = __webpack_require__(0);
+var _simplexNoise = __webpack_require__(1);
 
 var _simplexNoise2 = _interopRequireDefault(_simplexNoise);
 
-var _utils = __webpack_require__(2);
+var _utils = __webpack_require__(0);
 
 var utils = _interopRequireWildcard(_utils);
 
@@ -755,162 +911,6 @@ document.getElementsByTagName('button')[0].addEventListener('click', function ()
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   new PirateMap();
 });
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.tearCanvasBorders = tearCanvasBorders;
-exports.getRandomInt = getRandomInt;
-exports.getRandomSample = getRandomSample;
-exports.getRandomName = getRandomName;
-function tearCanvasBorders(canvas) {
-  _tearBottom(canvas);
-  _tearTop(canvas);
-  _tearLeft(canvas);
-  _tearRight(canvas);
-}
-
-function _tearBottom(canvas) {
-  var ctx = canvas.getContext('2d');
-  var lastX = 0,
-      randX = void 0,
-      randY = void 0;
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(0, canvas.height);
-
-  randY = (Math.floor(Math.random() * 3) + 95) / 100 * canvas.height;
-  ctx.lineTo(0, randY);
-
-  while (lastX <= canvas.width) {
-    randX = Math.floor(Math.random() * 3) / 100 * canvas.width;
-    randY = (Math.floor(Math.random() * 3) + 95) / 100 * canvas.height;
-    lastX = lastX + randX;
-    ctx.lineTo(lastX, randY);
-  }
-  ctx.lineTo(canvas.width, canvas.height);
-  ctx.closePath();
-  ctx.clip();
-  ctx.beginPath();
-  ctx.fillStyle = 'white';
-  ctx.rect(0, 0, canvas.width, canvas.height);
-  ctx.fill();
-  ctx.restore();
-}
-
-function _tearTop(canvas) {
-  var ctx = canvas.getContext('2d');
-  var lastX = 0,
-      randX = void 0,
-      randY = void 0;
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-
-  randY = (Math.floor(Math.random() * 3) + 1) / 100 * canvas.height;
-  ctx.lineTo(0, randY);
-
-  while (lastX <= canvas.width) {
-    randX = Math.floor(Math.random() * 3) / 100 * canvas.width;
-    randY = (Math.floor(Math.random() * 3) + 1) / 100 * canvas.height;
-    lastX = lastX + randX;
-    ctx.lineTo(lastX, randY);
-  }
-  ctx.lineTo(canvas.width, 0);
-  ctx.closePath();
-  ctx.clip();
-  ctx.beginPath();
-  ctx.fillStyle = 'white';
-  ctx.rect(0, 0, canvas.width, canvas.height);
-  ctx.fill();
-  ctx.restore();
-}
-
-function _tearLeft(canvas) {
-  var ctx = canvas.getContext('2d');
-  var lastY = 0,
-      randX = void 0,
-      randY = void 0;
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-
-  randX = (Math.floor(Math.random() * 3) + 1) / 100 * canvas.width;
-  ctx.lineTo(randX, 0);
-
-  while (lastY <= canvas.height) {
-    randX = (Math.floor(Math.random() * 3) + 1) / 100 * canvas.width;
-    randY = Math.floor(Math.random() * 3) / 100 * canvas.height;
-    lastY = lastY + randY;
-    ctx.lineTo(randX, lastY);
-  }
-  ctx.lineTo(0, canvas.height);
-  ctx.closePath();
-  ctx.clip();
-  ctx.beginPath();
-  ctx.fillStyle = 'white';
-  ctx.rect(0, 0, canvas.width, canvas.height);
-  ctx.fill();
-  ctx.restore();
-}
-
-function _tearRight(canvas) {
-  var ctx = canvas.getContext('2d');
-  var lastY = 0,
-      randX = void 0,
-      randY = void 0;
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(canvas.width, 0);
-
-  randX = (Math.floor(Math.random() * 3) + 1) / 100 * canvas.width;
-  ctx.lineTo(randX, 0);
-
-  while (lastY <= canvas.height) {
-    randX = (Math.floor(Math.random() * 3) + 95) / 100 * canvas.width;
-    randY = Math.floor(Math.random() * 3) / 100 * canvas.height;
-    lastY = lastY + randY;
-    ctx.lineTo(randX, lastY);
-  }
-  ctx.lineTo(canvas.width, canvas.height);
-  ctx.closePath();
-  ctx.clip();
-  ctx.beginPath();
-  ctx.fillStyle = 'white';
-  ctx.rect(0, 0, canvas.width, canvas.height);
-  ctx.fill();
-  ctx.restore();
-}
-
-/* Generate a random integer between min and max */
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
-/* Get a random item from an array of items */
-function getRandomSample(items) {
-  return items[Math.floor(Math.random() * items.length)];
-}
-
-function getRandomName() {
-  var consonant = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'];
-  var vowel = ['a', 'e', 'i', 'o', 'u'];
-  var length = getRandomInt(2, 5);
-  var name = "",
-      start = 0;
-  while (start < length) {
-    name = name + getRandomSample(consonant) + getRandomSample(vowel);
-    start++;
-  }
-  return name.charAt(0).toUpperCase() + name.slice(1);
-}
 
 /***/ })
 /******/ ]);
