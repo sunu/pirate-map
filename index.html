@@ -3,10 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <title>Document</title>
+  <style type="text/css">
+    .container {
+      width: 100%;
+      text-align: center;
+    }
+    button {
+      display: block;
+      margin: auto;
+    }
+  </style>
   <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
 </head>
 <body>
-  <canvas></canvas>
+  <div class="container">
+    <canvas></canvas>
+    <button id="regenerate">Generate a new one!</button>
+  </div>
   <script src="dist/app.bundle.js"></script>
 </body>
 </html>

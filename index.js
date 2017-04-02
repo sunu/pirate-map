@@ -95,27 +95,22 @@ class PirateMap {
     return value
   }
 
-  /* Generate a random integer between min and max */
-  getRandomInt (min, max) {
-    return Math.floor(Math.random() * (max - min)) + min
-  }
-
   drawWaterNames () {
     let totalPoints = this.waters.length
     let sectionLength = Math.floor(totalPoints / 3)
-    let bayOne = this.waters[
-      this.getRandomInt(totalPoints - sectionLength, totalPoints)
-    ]
+    let bayOne = utils.getRandomSample(this.waters.slice(totalPoints - sectionLength, totalPoints).filter((val) => {
+      return (val[0] < this.canvas.width - 200) && (val[1] > 100)
+    }))
     let ctx = this.canvas.getContext('2d')
     ctx.font = '30px "Tangerine"'
     ctx.fillStyle = "#000"
-    ctx.fillText(bayOne[2] + " of Guantamela", bayOne[0]-10, bayOne[1]-10);
-    let bayTwo = this.waters[
-      this.getRandomInt(0, sectionLength)
-    ]
+    ctx.fillText(bayOne[2] + " of " + utils.getRandomName(), bayOne[0], bayOne[1]);
+    let bayTwo = utils.getRandomSample(this.waters.slice(0, sectionLength).filter((val) => {
+      return (val[0] > 150) && (val[1] > 100)
+    }))
     ctx.font = '30px "Tangerine"'
     ctx.fillStyle = "#000"
-    ctx.fillText(bayTwo[2] + " of Guantamela", bayTwo[0]-10, bayTwo[1]-10);
+    ctx.fillText(bayTwo[2] + " of " + utils.getRandomName(), bayTwo[0], bayTwo[1]);
   }
 
   /* Guide our pirates to the treasure */
@@ -123,7 +118,7 @@ class PirateMap {
     let totalPoints = this.lands.length
     let sectionLength = Math.floor(totalPoints / 5)
     let treasure = this.lands[
-      this.getRandomInt(totalPoints - sectionLength, totalPoints)
+      utils.getRandomInt(totalPoints - sectionLength, totalPoints)
     ]
     let ctx = this.canvas.getContext('2d')
     ctx.beginPath()
@@ -139,11 +134,11 @@ class PirateMap {
     let path = []
     let start = 0
     while (start < totalPoints - sectionLength) {
-      let point = this.lands[this.getRandomInt(start, start + sectionLength)]
+      let point = this.lands[utils.getRandomInt(start, start + sectionLength)]
       path.push(point)
       ctx.font = '30px "Tangerine"'
       ctx.fillStyle = "#000"
-      ctx.fillText(point[2] + " of Guantamela", point[0]-10, point[1]-10);
+      ctx.fillText(point[2] + " of " + utils.getRandomName(), point[0]-10, point[1]-10);
       start = start + sectionLength
     }
     path.push(treasure)
@@ -229,3 +224,10 @@ window.WebFont.load({
     new PirateMap()
   }
 });
+
+document.getElementsByTagName('button')[0].addEventListener('click', () => {
+  let canvas = document.getElementsByTagName('canvas')[0]
+  let ctx = canvas.getContext('2d')
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  new PirateMap()
+})

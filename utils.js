@@ -108,3 +108,25 @@ function _tearRight (canvas) {
   ctx.fill()
   ctx.restore()
 }
+
+/* Generate a random integer between min and max */
+export function getRandomInt (min, max) {
+  return Math.floor(Math.random() * (max - min)) + min
+}
+
+/* Get a random item from an array of items */
+export function getRandomSample (items) {
+  return items[Math.floor(Math.random() * items.length)]
+}
+
+export function getRandomName () {
+  let consonant = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'];
+  let vowel = ['a', 'e', 'i', 'o', 'u'];
+  let length = getRandomInt(2, 5)
+  let name = "", start = 0
+  while (start < length) {
+    name = name + getRandomSample(consonant) + getRandomSample(vowel)
+    start++
+  }
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
