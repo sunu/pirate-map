@@ -1,5 +1,7 @@
 import SimplexNoise from "simplex-noise"
 
+import * as utils from "./utils"
+
 class PirateMap {
   constructor () {
     var canvas = document.getElementsByTagName('canvas')[0]
@@ -13,8 +15,8 @@ class PirateMap {
   /* Draw a compass on the canvas */
   drawCompass () {
     let ctx = this.canvas.getContext('2d')
-    let compassWidth = this.canvas.width / 10
-    let compassHeight = this.canvas.height / 10
+    let compassWidth = this.canvas.width / 5
+    let compassHeight = this.canvas.height / 5
     ctx.fillStyle = "#58B8EB"
     ctx.fillStyle = "#F00"
 
@@ -215,6 +217,7 @@ class PirateMap {
     this.drawCompass()
     this.drawPath()
     this.drawWaterNames()
+    utils.tearCanvasBorders(this.canvas)
   }
 }
 
