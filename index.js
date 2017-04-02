@@ -98,6 +98,24 @@ class PirateMap {
     return Math.floor(Math.random() * (max - min)) + min
   }
 
+  drawWaterNames () {
+    let totalPoints = this.waters.length
+    let sectionLength = Math.floor(totalPoints / 3)
+    let bayOne = this.waters[
+      this.getRandomInt(totalPoints - sectionLength, totalPoints)
+    ]
+    let ctx = this.canvas.getContext('2d')
+    ctx.font = '30px "Tangerine"'
+    ctx.fillStyle = "#000"
+    ctx.fillText(bayOne[2] + " of Guantamela", bayOne[0]-10, bayOne[1]-10);
+    let bayTwo = this.waters[
+      this.getRandomInt(0, sectionLength)
+    ]
+    ctx.font = '30px "Tangerine"'
+    ctx.fillStyle = "#000"
+    ctx.fillText(bayTwo[2] + " of Guantamela", bayTwo[0]-10, bayTwo[1]-10);
+  }
+
   /* Guide our pirates to the treasure */
   drawPath () {
     let totalPoints = this.lands.length
@@ -121,6 +139,9 @@ class PirateMap {
     while (start < totalPoints - sectionLength) {
       let point = this.lands[this.getRandomInt(start, start + sectionLength)]
       path.push(point)
+      ctx.font = '30px "Tangerine"'
+      ctx.fillStyle = "#000"
+      ctx.fillText(point[2] + " of Guantamela", point[0]-10, point[1]-10);
       start = start + sectionLength
     }
     path.push(treasure)
@@ -147,37 +168,61 @@ class PirateMap {
     var image = ctx.createImageData(this.canvas.width, this.canvas.height)
     var data = image.data
     this.lands = []
+    this.waters = []
     for (var x = 0; x < this.canvas.width; x++) {
       for (var y = 0; y < this.canvas.height; y++) {
         var value = this.generateNoise(x, y)
         var cell = (x + y * this.canvas.width) * 4
 
-        if (value > 80) {
-          // land
-          data[cell] = 160
-          data[cell + 1] = 140
-          data[cell + 2] = 120
+        if (value > 200) {
+          // mountains
+          data[cell] = 54
+          data[cell + 1] = 68
+          data[cell + 2] = 50
           data[cell + 3] = value // alpha.
-          this.lands.push([x, y])
+          this.lands.push([x, y, "Mountains"])
+        } else if (value > 150) {
+          // jungle
+          data[cell] = 54
+          data[cell + 1] = 68
+          data[cell + 2] = 53
+          data[cell + 3] = value
+          this.lands.push([x, y, "Jungles"])
+        } else if (value > 80) {
+          // land
+          data[cell] = 54
+          data[cell + 1] = 68
+          data[cell + 2] = 53
+          data[cell + 3] = value
+          this.lands.push([x, y, "Plains"])
         } else if (value > 70) {
           // shallow waters
           data[cell] = 0
           data[cell + 1] = 113
           data[cell + 2] = 185
-          data[cell + 3] = (255 - value) / 1.05 // alpha.
+          data[cell + 3] = (255 - value) / 1.05
         } else {
           // deep waters
           data[cell] = 0
           data[cell + 1] = 113
           data[cell + 2] = 185
-          data[cell + 3] = 255 - value // alpha.
+          data[cell + 3] = 255 - value
+          this.waters.push([x, y, "Bay"])
         }
       }
     }
     ctx.putImageData(image, 0, 0)
     this.drawCompass()
     this.drawPath()
+    this.drawWaterNames()
   }
 }
 
-new PirateMap()
+window.WebFont.load({
+  google: {
+    families: ['Tangerine']
+  },
+  active: () => {
+    new PirateMap()
+  }
+});
