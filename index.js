@@ -10,6 +10,7 @@ var ctx = canvas.getContext('2d')
 var image = ctx.createImageData(canvas.width, canvas.height)
 var data = image.data
 
+
 let generateNoise = (nx, ny, frequency) => {
   // mix things up with varied frquencies and octaves
   let value = (
@@ -18,9 +19,7 @@ let generateNoise = (nx, ny, frequency) => {
     0.25 * simplex.noise2D(4 * frequency * nx, 4 * frequency * ny) +
     0.125 * simplex.noise2D(8 * frequency * nx, 8 * frequency * ny)
   )
-  // convert from -1 to 1 range to 0 to 1 range
-  // https://stackoverflow.com/q/929103/
-  value = (value + 1) / 2
+  value = Math.pow(value, 2)
   value *= 255
   return value
 }
@@ -33,13 +32,13 @@ for (var x = 0; x < canvas.width; x++) {
     var value = generateNoise(nx, ny, frequency)
     var cell = (x + y * canvas.width) * 4
 
-    if (value < 120) {
+    if (value < 100) {
       // land
       data[cell] = 160
       data[cell + 1] = 140
       data[cell + 2] = 120
       data[cell + 3] = 255 - value // alpha.
-    } else if (value < 150) {
+    } else if (value < 110) {
       // shallow waters
       data[cell] = 0
       data[cell + 1] = 153
@@ -50,7 +49,7 @@ for (var x = 0; x < canvas.width; x++) {
       data[cell] = 0
       data[cell + 1] = 153
       data[cell + 2] = 255
-      data[cell + 3] = (value + 255) / 2.3// alpha.
+      data[cell + 3] = (value + 255) / 2 // alpha.
     }
   }
 }
