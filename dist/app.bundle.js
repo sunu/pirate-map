@@ -491,49 +491,426 @@ if (true) {
 
 /***/ }),
 /* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_simplex_noise__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_simplex_noise___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_simplex_noise__);
 
 
-var simplex = new __WEBPACK_IMPORTED_MODULE_0_simplex_noise___default.a(),
-    value2d = simplex.noise2D(5, 10);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var canvas = document.getElementsByTagName('canvas')[0];
-canvas.width = 500;
-canvas.height = 500;
-var ctx = canvas.getContext('2d');
-var image = ctx.createImageData(canvas.width, canvas.height);
-var data = image.data;
+var _simplexNoise = __webpack_require__(0);
 
-for (var x = 0; x < canvas.width; x++) {
-  for (var y = 0; y < canvas.height; y++) {
-    // convert from -1 to 1 range to 0 to 1 range
-    // https://stackoverflow.com/q/929103/
-    var value = (simplex.noise2D(x / 100, y / 100) + 1) / 2;
-    value *= 255;
-    var cell = (x + y * canvas.width) * 4;
+var _simplexNoise2 = _interopRequireDefault(_simplexNoise);
 
-    if (value < 80) {
-      // land
-      data[cell] = 158;
-      data[cell + 1] = 158;
-      data[cell + 2] = 158;
-      data[cell + 3] = 255 - value; // alpha.
-    } else {
-      // water
-      data[cell] = 0;
-      data[cell + 1] = 153;
-      data[cell + 2] = 255;
-      data[cell + 3] = value; // alpha.
-    }
+var _utils = __webpack_require__(2);
+
+var utils = _interopRequireWildcard(_utils);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var PirateMap = function () {
+  function PirateMap() {
+    _classCallCheck(this, PirateMap);
+
+    var canvas = document.getElementsByTagName('canvas')[0];
+    canvas.width = 1000;
+    canvas.height = 600;
+    this.canvas = canvas;
+    this.simplex = new _simplexNoise2.default();
+    this.drawMap();
   }
+
+  /* Draw a compass on the canvas */
+
+
+  _createClass(PirateMap, [{
+    key: "drawCompass",
+    value: function drawCompass() {
+      var ctx = this.canvas.getContext('2d');
+      var compassWidth = this.canvas.width / 5;
+      var compassHeight = this.canvas.height / 5;
+      ctx.fillStyle = "#58B8EB";
+      ctx.fillStyle = "#F00";
+
+      // draw outer circle
+      ctx.beginPath();
+      ctx.fillStyle = "#0FDDF5";
+      ctx.arc(compassWidth / 2, this.canvas.height - compassHeight / 2, 22, 0, 36, false);
+      ctx.fill();
+
+      // draw inner circle
+      ctx.beginPath();
+      ctx.fillStyle = "#AFEEF9";
+      ctx.arc(compassWidth / 2, this.canvas.height - compassHeight / 2, 20, 0, 36, false);
+      ctx.fill();
+
+      // lower niddle
+      ctx.beginPath();
+      ctx.moveTo(compassWidth / 2, this.canvas.height);
+      ctx.lineTo(compassWidth / 2 - 5, this.canvas.height - compassHeight / 2);
+      ctx.lineTo(compassWidth / 2, this.canvas.height - compassHeight / 2);
+      ctx.lineTo(compassWidth / 2, this.canvas.height);
+      ctx.fillStyle = "#DAE1EF";
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(compassWidth / 2, this.canvas.height);
+      ctx.lineTo(compassWidth / 2 + 5, this.canvas.height - compassHeight / 2);
+      ctx.lineTo(compassWidth / 2, this.canvas.height - compassHeight / 2);
+      ctx.lineTo(compassWidth / 2, this.canvas.height);
+      ctx.fillStyle = "#91AEDC";
+      ctx.fill();
+
+      // upper niddle
+      ctx.beginPath();
+      ctx.moveTo(compassWidth / 2, this.canvas.height - compassHeight);
+      ctx.lineTo(compassWidth / 2 - 5, this.canvas.height - compassHeight / 2);
+      ctx.lineTo(compassWidth / 2, this.canvas.height - compassHeight / 2);
+      ctx.lineTo(compassWidth / 2, this.canvas.height - compassHeight);
+      ctx.fillStyle = "#FF532B";
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(compassWidth / 2, this.canvas.height - compassHeight);
+      ctx.lineTo(compassWidth / 2 + 5, this.canvas.height - compassHeight / 2);
+      ctx.lineTo(compassWidth / 2, this.canvas.height - compassHeight / 2);
+      ctx.lineTo(compassWidth / 2, this.canvas.height - compassHeight);
+      ctx.fillStyle = "#DC052C";
+      ctx.fill();
+    }
+
+    /* Generate alpha value based on co-ordinate of pixel
+    using simplex noise */
+
+  }, {
+    key: "generateNoise",
+    value: function generateNoise(x, y) {
+      var nx = x / this.canvas.width - 0.5;
+      var ny = y / this.canvas.height - 0.5;
+
+      // mix things up with varied frquencies and octaves
+      var frequency = 1.5;
+      var value = 1 * this.simplex.noise2D(frequency * nx, frequency * ny) + 0.5 * this.simplex.noise2D(2 * frequency * nx, 2 * frequency * ny) + 0.25 * this.simplex.noise2D(4 * frequency * nx, 4 * frequency * ny) + 0.125 * this.simplex.noise2D(8 * frequency * nx, 8 * frequency * ny);
+      value = Math.pow(value, 2);
+
+      // Higher values at center
+      var distance = Math.hypot(this.canvas.width / 2 - x, this.canvas.height / 2 - y) / 255;
+      // calibration constants, came of with these by playing around
+      // roughly regulate island size
+      var a = 0.5;
+      var b = 0.6;
+      var c = 0.6;
+      value = (value + a) * (1 - b * Math.pow(distance, c));
+      value *= 255;
+      return value;
+    }
+  }, {
+    key: "drawWaterNames",
+    value: function drawWaterNames() {
+      var _this = this;
+
+      var totalPoints = this.waters.length;
+      var sectionLength = Math.floor(totalPoints / 3);
+      var bayOne = utils.getRandomSample(this.waters.slice(totalPoints - sectionLength, totalPoints).filter(function (val) {
+        return val[0] < _this.canvas.width - 200 && val[1] > 100;
+      }));
+      var ctx = this.canvas.getContext('2d');
+      ctx.font = '30px "Tangerine"';
+      ctx.fillStyle = "#000";
+      ctx.fillText(bayOne[2] + " of " + utils.getRandomName(), bayOne[0], bayOne[1]);
+      var bayTwo = utils.getRandomSample(this.waters.slice(0, sectionLength).filter(function (val) {
+        return val[0] > 150 && val[1] > 100;
+      }));
+      ctx.font = '30px "Tangerine"';
+      ctx.fillStyle = "#000";
+      ctx.fillText(bayTwo[2] + " of " + utils.getRandomName(), bayTwo[0], bayTwo[1]);
+    }
+
+    /* Guide our pirates to the treasure */
+
+  }, {
+    key: "drawPath",
+    value: function drawPath() {
+      var totalPoints = this.lands.length;
+      var sectionLength = Math.floor(totalPoints / 5);
+      var treasure = this.lands[utils.getRandomInt(totalPoints - sectionLength, totalPoints)];
+      var ctx = this.canvas.getContext('2d');
+      ctx.beginPath();
+      ctx.strokeStyle = "#FF532B";
+      ctx.lineWidth = 5;
+      ctx.moveTo(treasure[0] - 10, treasure[1] - 10);
+      ctx.lineTo(treasure[0] + 10, treasure[1] + 10);
+      ctx.stroke();
+      ctx.moveTo(treasure[0] + 10, treasure[1] - 10);
+      ctx.lineTo(treasure[0] - 10, treasure[1] + 10);
+      ctx.stroke();
+
+      var path = [];
+      var start = 0;
+      while (start < totalPoints - sectionLength) {
+        var point = this.lands[utils.getRandomInt(start, start + sectionLength)];
+        path.push(point);
+        ctx.font = '30px "Tangerine"';
+        ctx.fillStyle = "#000";
+        ctx.fillText(point[2] + " of " + utils.getRandomName(), point[0] - 10, point[1] - 10);
+        start = start + sectionLength;
+      }
+      path.push(treasure);
+
+      ctx.setLineDash([10, 10]);
+      ctx.beginPath();
+      // draw a smooth curve through all the points in path
+      // from http://stackoverflow.com/a/7058606
+      // move to the first point
+      ctx.moveTo(path[0][0], path[0][1]);
+      for (var i = 1; i < path.length - 2; i++) {
+        var xc = (path[i][0] + path[i + 1][0]) / 2;
+        var yc = (path[i][1] + path[i + 1][1]) / 2;
+        ctx.quadraticCurveTo(path[i][0], path[i][1], xc, yc);
+      }
+      // curve through the last two path
+      ctx.quadraticCurveTo(path[i][0], path[i][1], path[i + 1][0], path[i + 1][1]);
+      ctx.stroke();
+    }
+
+    /* Get the wheels running. Make shit happen. */
+
+  }, {
+    key: "drawMap",
+    value: function drawMap() {
+      var ctx = this.canvas.getContext('2d');
+      var image = ctx.createImageData(this.canvas.width, this.canvas.height);
+      var data = image.data;
+      this.lands = [];
+      this.waters = [];
+      for (var x = 0; x < this.canvas.width; x++) {
+        for (var y = 0; y < this.canvas.height; y++) {
+          var value = this.generateNoise(x, y);
+          var cell = (x + y * this.canvas.width) * 4;
+
+          if (value > 200) {
+            // mountains
+            data[cell] = 54;
+            data[cell + 1] = 68;
+            data[cell + 2] = 50;
+            data[cell + 3] = value; // alpha.
+            this.lands.push([x, y, "Mountains"]);
+          } else if (value > 150) {
+            // jungle
+            data[cell] = 54;
+            data[cell + 1] = 68;
+            data[cell + 2] = 53;
+            data[cell + 3] = value;
+            this.lands.push([x, y, "Jungles"]);
+          } else if (value > 80) {
+            // land
+            data[cell] = 54;
+            data[cell + 1] = 68;
+            data[cell + 2] = 53;
+            data[cell + 3] = value;
+            this.lands.push([x, y, "Plains"]);
+          } else if (value > 70) {
+            // shallow waters
+            data[cell] = 0;
+            data[cell + 1] = 113;
+            data[cell + 2] = 185;
+            data[cell + 3] = (255 - value) / 1.05;
+          } else {
+            // deep waters
+            data[cell] = 0;
+            data[cell + 1] = 113;
+            data[cell + 2] = 185;
+            data[cell + 3] = 255 - value;
+            this.waters.push([x, y, "Bay"]);
+          }
+        }
+      }
+      ctx.putImageData(image, 0, 0);
+      this.drawCompass();
+      this.drawPath();
+      this.drawWaterNames();
+      utils.tearCanvasBorders(this.canvas);
+    }
+  }]);
+
+  return PirateMap;
+}();
+
+window.WebFont.load({
+  google: {
+    families: ['Tangerine']
+  },
+  active: function active() {
+    new PirateMap();
+  }
+});
+
+document.getElementsByTagName('button')[0].addEventListener('click', function () {
+  var canvas = document.getElementsByTagName('canvas')[0];
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  new PirateMap();
+});
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.tearCanvasBorders = tearCanvasBorders;
+exports.getRandomInt = getRandomInt;
+exports.getRandomSample = getRandomSample;
+exports.getRandomName = getRandomName;
+function tearCanvasBorders(canvas) {
+  _tearBottom(canvas);
+  _tearTop(canvas);
+  _tearLeft(canvas);
+  _tearRight(canvas);
 }
 
-ctx.putImageData(image, 0, 0);
+function _tearBottom(canvas) {
+  var ctx = canvas.getContext('2d');
+  var lastX = 0,
+      randX = void 0,
+      randY = void 0;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height);
+
+  randY = (Math.floor(Math.random() * 3) + 95) / 100 * canvas.height;
+  ctx.lineTo(0, randY);
+
+  while (lastX <= canvas.width) {
+    randX = Math.floor(Math.random() * 3) / 100 * canvas.width;
+    randY = (Math.floor(Math.random() * 3) + 95) / 100 * canvas.height;
+    lastX = lastX + randX;
+    ctx.lineTo(lastX, randY);
+  }
+  ctx.lineTo(canvas.width, canvas.height);
+  ctx.closePath();
+  ctx.clip();
+  ctx.beginPath();
+  ctx.fillStyle = 'white';
+  ctx.rect(0, 0, canvas.width, canvas.height);
+  ctx.fill();
+  ctx.restore();
+}
+
+function _tearTop(canvas) {
+  var ctx = canvas.getContext('2d');
+  var lastX = 0,
+      randX = void 0,
+      randY = void 0;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+
+  randY = (Math.floor(Math.random() * 3) + 1) / 100 * canvas.height;
+  ctx.lineTo(0, randY);
+
+  while (lastX <= canvas.width) {
+    randX = Math.floor(Math.random() * 3) / 100 * canvas.width;
+    randY = (Math.floor(Math.random() * 3) + 1) / 100 * canvas.height;
+    lastX = lastX + randX;
+    ctx.lineTo(lastX, randY);
+  }
+  ctx.lineTo(canvas.width, 0);
+  ctx.closePath();
+  ctx.clip();
+  ctx.beginPath();
+  ctx.fillStyle = 'white';
+  ctx.rect(0, 0, canvas.width, canvas.height);
+  ctx.fill();
+  ctx.restore();
+}
+
+function _tearLeft(canvas) {
+  var ctx = canvas.getContext('2d');
+  var lastY = 0,
+      randX = void 0,
+      randY = void 0;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+
+  randX = (Math.floor(Math.random() * 3) + 1) / 100 * canvas.width;
+  ctx.lineTo(randX, 0);
+
+  while (lastY <= canvas.height) {
+    randX = (Math.floor(Math.random() * 3) + 1) / 100 * canvas.width;
+    randY = Math.floor(Math.random() * 3) / 100 * canvas.height;
+    lastY = lastY + randY;
+    ctx.lineTo(randX, lastY);
+  }
+  ctx.lineTo(0, canvas.height);
+  ctx.closePath();
+  ctx.clip();
+  ctx.beginPath();
+  ctx.fillStyle = 'white';
+  ctx.rect(0, 0, canvas.width, canvas.height);
+  ctx.fill();
+  ctx.restore();
+}
+
+function _tearRight(canvas) {
+  var ctx = canvas.getContext('2d');
+  var lastY = 0,
+      randX = void 0,
+      randY = void 0;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(canvas.width, 0);
+
+  randX = (Math.floor(Math.random() * 3) + 1) / 100 * canvas.width;
+  ctx.lineTo(randX, 0);
+
+  while (lastY <= canvas.height) {
+    randX = (Math.floor(Math.random() * 3) + 95) / 100 * canvas.width;
+    randY = Math.floor(Math.random() * 3) / 100 * canvas.height;
+    lastY = lastY + randY;
+    ctx.lineTo(randX, lastY);
+  }
+  ctx.lineTo(canvas.width, canvas.height);
+  ctx.closePath();
+  ctx.clip();
+  ctx.beginPath();
+  ctx.fillStyle = 'white';
+  ctx.rect(0, 0, canvas.width, canvas.height);
+  ctx.fill();
+  ctx.restore();
+}
+
+/* Generate a random integer between min and max */
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+/* Get a random item from an array of items */
+function getRandomSample(items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+function getRandomName() {
+  var consonant = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'];
+  var vowel = ['a', 'e', 'i', 'o', 'u'];
+  var length = getRandomInt(2, 5);
+  var name = "",
+      start = 0;
+  while (start < length) {
+    name = name + getRandomSample(consonant) + getRandomSample(vowel);
+    start++;
+  }
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
 
 /***/ })
 /******/ ]);
