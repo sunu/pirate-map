@@ -10,6 +10,59 @@ var ctx = canvas.getContext('2d')
 var image = ctx.createImageData(canvas.width, canvas.height)
 var data = image.data
 
+let drawCompas = () => {
+  let compasWidth = canvas.width / 10
+  let compasHeight = canvas.height / 10
+  ctx.fillStyle = "#58B8EB"
+  ctx.fillStyle = "#F00"
+
+  // draw outer circle
+  ctx.beginPath()
+  ctx.fillStyle = "#0FDDF5"
+  ctx.arc(compasWidth/2, canvas.height-compasHeight/2, 22, 0, 36, false)
+  ctx.fill()
+
+  // draw inner circle
+  ctx.beginPath()
+  ctx.fillStyle = "#AFEEF9"
+  ctx.arc(compasWidth/2, canvas.height - compasHeight/2, 20, 0, 36, false)
+  ctx.fill()
+
+  // lower niddle
+  ctx.beginPath();
+  ctx.moveTo(compasWidth/2, canvas.height);
+  ctx.lineTo(compasWidth/2 - 5, canvas.height - compasHeight/2);
+  ctx.lineTo(compasWidth/2, canvas.height - compasHeight/2);
+  ctx.lineTo(compasWidth/2, canvas.height);
+  ctx.fillStyle = "#DAE1EF";
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(compasWidth/2, canvas.height);
+  ctx.lineTo(compasWidth/2 + 5, canvas.height - compasHeight/2);
+  ctx.lineTo(compasWidth/2, canvas.height - compasHeight/2);
+  ctx.lineTo(compasWidth/2, canvas.height);
+  ctx.fillStyle = "#91AEDC";
+  ctx.fill();
+
+  // upper niddle
+  ctx.beginPath();
+  ctx.moveTo(compasWidth/2, canvas.height - compasHeight);
+  ctx.lineTo(compasWidth/2 - 5, canvas.height - compasHeight/2);
+  ctx.lineTo(compasWidth/2, canvas.height - compasHeight/2);
+  ctx.lineTo(compasWidth/2, canvas.height - compasHeight);
+  ctx.fillStyle = "#FF532B";
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(compasWidth/2, canvas.height - compasHeight);
+  ctx.lineTo(compasWidth/2 + 5, canvas.height - compasHeight/2);
+  ctx.lineTo(compasWidth/2, canvas.height - compasHeight/2);
+  ctx.lineTo(compasWidth/2, canvas.height -compasHeight);
+  ctx.fillStyle = "#DC052C";
+  ctx.fill();
+}
+
 
 let generateNoise = (x, y) => {
   let nx = x / canvas.width - 0.5
@@ -65,3 +118,4 @@ for (var x = 0; x < canvas.width; x++) {
 }
 
 ctx.putImageData(image, 0, 0)
+drawCompas()
